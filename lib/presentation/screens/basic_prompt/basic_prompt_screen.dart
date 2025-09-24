@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-class BasicPromptScreen extends StatefulWidget {
+import '../../providers/user_provider.dart';
+
+class BasicPromptScreen extends ConsumerStatefulWidget {
   const BasicPromptScreen({super.key});
 
   @override
-  State<BasicPromptScreen> createState() => _BasicPromptScreenState();
+  ConsumerState<BasicPromptScreen> createState() => _BasicPromptScreenState();
 }
 
-class _BasicPromptScreenState extends State<BasicPromptScreen> {
+class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
   final _chatController = InMemoryChatController();
 
   @override
@@ -21,6 +24,7 @@ class _BasicPromptScreenState extends State<BasicPromptScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final geminiUser = ref.watch(geminiUserProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Basic Prompt')),
       body: Chat(
@@ -115,7 +119,7 @@ class _BasicPromptScreenState extends State<BasicPromptScreen> {
         chatController: _chatController,
         currentUserId: 'user1',
         resolveUser: (UserID id) async {
-          return User(id: id, name: 'John Doe');
+          return geminiUser;
         },
         onMessageSend: (message) {
           _chatController.insertMessage(
