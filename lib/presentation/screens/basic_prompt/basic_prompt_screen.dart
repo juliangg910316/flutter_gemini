@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_gemini/presentation/providers/chat/is_gemini_writing.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../providers/user_provider.dart';
+import '../../providers/users/user_provider.dart';
 
 class BasicPromptScreen extends ConsumerStatefulWidget {
   const BasicPromptScreen({super.key});
@@ -25,6 +26,8 @@ class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
   @override
   Widget build(BuildContext context) {
     final geminiUser = ref.watch(geminiUserProvider);
+    final user = ref.watch(userProvider);
+    final isGeminiWriting = ref.watch(isGeminiWritingProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Basic Prompt')),
       body: Chat(
@@ -117,7 +120,7 @@ class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
         //         },
         // ),
         chatController: _chatController,
-        currentUserId: 'user1',
+        currentUserId: user.id,
         resolveUser: (UserID id) async {
           return geminiUser;
         },
@@ -126,7 +129,7 @@ class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
             TextMessage(
               // Better to use UUID or similar for the ID - IDs must be unique
               id: Uuid().v4(),
-              authorId: 'user1',
+              authorId: user.id,
               createdAt: DateTime.now().toUtc(),
               text: message,
             ),

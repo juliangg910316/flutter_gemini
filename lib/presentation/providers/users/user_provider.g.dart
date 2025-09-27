@@ -47,4 +47,44 @@ final class GeminiUserProvider extends $FunctionalProvider<User, User, User>
   }
 }
 
-String _$geminiUserHash() => r'341608f439831245971fe43c891e09116374d32a';
+String _$geminiUserHash() => r'2d031a2c3970344efc29328c916df733f48ef7c2';
+
+@ProviderFor(user)
+const userProvider = UserProvider._();
+
+final class UserProvider extends $FunctionalProvider<User, User, User>
+    with $Provider<User> {
+  const UserProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userHash();
+
+  @$internal
+  @override
+  $ProviderElement<User> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  User create(Ref ref) {
+    return user(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(User value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<User>(value),
+    );
+  }
+}
+
+String _$userHash() => r'fda3cea78bad3e5a25ae683b74c46f022892647c';
