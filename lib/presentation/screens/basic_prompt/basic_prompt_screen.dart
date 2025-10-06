@@ -1,33 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_gemini/presentation/providers/chat/basic_chat.dart';
 import 'package:flutter_gemini/presentation/providers/chat/is_gemini_writing.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../providers/users/user_provider.dart';
 
-class BasicPromptScreen extends ConsumerStatefulWidget {
+class BasicPromptScreen extends ConsumerWidget {
   const BasicPromptScreen({super.key});
 
   @override
-  ConsumerState<BasicPromptScreen> createState() => _BasicPromptScreenState();
-}
-
-class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
-  final _chatController = InMemoryChatController();
-
-  @override
-  void dispose() {
-    _chatController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final geminiUser = ref.watch(geminiUserProvider);
     final user = ref.watch(userProvider);
     final isGeminiWriting = ref.watch(isGeminiWritingProvider);
+    final chatController = ref.watch(basicChatProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Basic Prompt')),
       body: Chat(
@@ -119,21 +107,15 @@ class _BasicPromptScreenState extends ConsumerState<BasicPromptScreen> {
         //           );
         //         },
         // ),
-        chatController: _chatController,
+        chatController: chatController,
         currentUserId: user.id,
         resolveUser: (UserID id) async {
           return geminiUser;
         },
         onMessageSend: (message) {
-          _chatController.insertMessage(
-            TextMessage(
-              // Better to use UUID or similar for the ID - IDs must be unique
-              id: Uuid().v4(),
-              authorId: user.id,
-              createdAt: DateTime.now().toUtc(),
-              text: message,
-            ),
-          );
+          ref
+              .read(basicChatProvider.notifier)
+              .addMessage(text: message, authorId: user.id);
         },
         theme: ChatTheme.dark(),
       ),
