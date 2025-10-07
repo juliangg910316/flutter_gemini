@@ -50,3 +50,5 @@ macos/Podfile
 macos/Flutter/Flutter-Debug.xcconfig
 macos/Flutter/Flutter-Release.xcconfig
 pubspec.lock
+
+.env
