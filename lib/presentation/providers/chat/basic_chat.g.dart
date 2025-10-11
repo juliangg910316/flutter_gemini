@@ -41,7 +41,7 @@ final class BasicChatProvider
   }
 }
 
-String _$basicChatHash() => r'f6e31e3efb935e17e41ca8bded50887e17e29d98';
+String _$basicChatHash() => r'910352f2424fa7f9b9a6d4e78e5c2c6f89502d96';
 
 abstract class _$BasicChat extends $Notifier<InMemoryChatController> {
   InMemoryChatController build();

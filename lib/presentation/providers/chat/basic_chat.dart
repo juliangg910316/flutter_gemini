@@ -20,7 +20,7 @@ class BasicChat extends _$BasicChat {
 
   void addMessage({required String text, required String authorId}) {
     _createTextResponse(text, authorId);
-    _geminiTextResponse(text);
+    _geminiTextResponseStream(text);
   }
 
   void _geminiTextResponse(String prompt) async {
@@ -28,6 +28,19 @@ class BasicChat extends _$BasicChat {
     final textResponse = await gemini.getResponse(prompt);
     _setGeminiWritingStatus(false);
     _createTextResponse(textResponse, geminiUser.id);
+  }
+
+  void _geminiTextResponseStream(String prompt) async {
+    _createTextResponse('Gemini esta pensando ...', geminiUser.id);
+    gemini.getResponseStream(prompt).listen((responseChunk) {
+      if (responseChunk.isEmpty) return;
+      final updateMessage =
+          state.messages.lastWhere((msg) => msg.authorId == geminiUser.id)
+              as TextMessage;
+      final updatedMessage = updateMessage.copyWith(text: responseChunk);
+      state.updateMessage(updateMessage, updatedMessage);
+    });
+    // _createTextResponse(textResponse, geminiUser.id);
   }
 
   //Helper methods

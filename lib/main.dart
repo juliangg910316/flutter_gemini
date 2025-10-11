@@ -8,8 +8,6 @@ import 'config/router/app_router.dart';
 void main() async {
   AppTheme.setSystemUIOverlayStyle(isDarkMode: true);
   await dotenv.load(fileName: ".env");
-
-  print(dotenv.env['ENDPOINT_API']);
   runApp(ProviderScope(child: MainApp()));
 }
 
