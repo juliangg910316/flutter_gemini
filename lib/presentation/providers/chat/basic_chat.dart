@@ -2,6 +2,7 @@ import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../config/gemini/gemini_impl.dart';
 import '../users/user_provider.dart';
 import 'is_gemini_writing.dart';
 
@@ -9,6 +10,7 @@ part 'basic_chat.g.dart';
 
 @riverpod
 class BasicChat extends _$BasicChat {
+  final GeminiImpl gemini = GeminiImpl();
   @override
   InMemoryChatController build() {
     return InMemoryChatController();
@@ -31,7 +33,7 @@ class BasicChat extends _$BasicChat {
     final geminiUser = ref.read(geminiUserProvider);
     isGeminiWriting.setIsWriting();
 
-    await Future.delayed(const Duration(seconds: 2));
+    final textResponse = await gemini.getResponse(prompt);
 
     isGeminiWriting.setIsNotWriting();
 
@@ -40,7 +42,7 @@ class BasicChat extends _$BasicChat {
         id: Uuid().v4(),
         authorId: geminiUser.id,
         createdAt: DateTime.now().toUtc(),
-        text: "Hola $prompt, soy Gemini!",
+        text: textResponse,
       ),
     );
   }
