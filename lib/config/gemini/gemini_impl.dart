@@ -22,8 +22,38 @@ class GeminiImpl {
     String prompt, {
     List<XFile> files = const [],
   }) async* {
+    yield* _getStreamResponse(
+      prompt: prompt,
+      endpoint: '/basic-prompt-stream',
+      files: files,
+    );
+  }
+
+  Stream<String> getChatStream(
+    String prompt,
+    String chatId, {
+    List<XFile> files = const [],
+  }) async* {
+    yield* _getStreamResponse(
+      prompt: prompt,
+      endpoint: '/chat-stream',
+      formFields: {'chatId': chatId},
+      files: files,
+    );
+  }
+
+  // Emitir el stream de informacion
+  Stream<String> _getStreamResponse({
+    required String prompt,
+    required String endpoint,
+    Map<String, dynamic> formFields = const {},
+    List<XFile> files = const [],
+  }) async* {
     final formData = FormData();
     formData.fields.add(MapEntry('prompt', prompt));
+    for (final entry in formFields.entries) {
+      formData.fields.add(MapEntry(entry.key, entry.value));
+    }
     for (var file in files) {
       formData.files.add(
         MapEntry(
@@ -34,7 +64,7 @@ class GeminiImpl {
     }
     try {
       final response = await _dio.post(
-        '/basic-prompt-stream',
+        endpoint,
         data: formData,
         options: Options(responseType: ResponseType.stream),
       );
@@ -42,17 +72,8 @@ class GeminiImpl {
       String buffer = '';
       await for (var chunk in stream) {
         buffer += utf8.decode(chunk, allowMalformed: true);
-        // int index;
-        // while ((index = buffer.indexOf('\n')) != -1) {
-        //   final line = buffer.substring(0, index).trim();
-        //   if (line.isNotEmpty) {
-        //     yield line;
-        //   }
-        //   buffer = buffer.substring(index + 1);
-        // }
         yield buffer;
       }
-      // yield* response.data.stream.map((event) => event.toString());
     } catch (e) {
       yield 'Error: $e';
     }

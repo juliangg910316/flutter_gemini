@@ -23,9 +23,16 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              context.push('/prompt');
+              context.push('/basic-prompt');
             },
             child: Text('Get Started'),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              context.push('/chat-context');
+            },
+            child: Text('Chat conversacional'),
           ),
         ],
       ),
