@@ -1,8 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import '../../presentation/screens/basic_prompt/basic_prompt_screen.dart';
-import '../../presentation/screens/chat_context/chat_context_screen.dart';
-import '../../presentation/screens/home/home_screen.dart';
+import '../../presentation/screens/screens.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -15,6 +13,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/chat-context',
       builder: (context, state) => const ChatContextScreen(),
+    ),
+    GoRoute(
+      path: '/image-playground',
+      builder: (context, state) => const ImagePlaygroundScreen(),
     ),
   ],
 );

@@ -34,6 +34,13 @@ class HomeScreen extends StatelessWidget {
             },
             child: Text('Chat conversacional'),
           ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              context.push('/image-playground');
+            },
+            child: Text('Imágenes con Gemini'),
+          ),
         ],
       ),
     );

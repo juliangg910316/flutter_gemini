@@ -78,4 +78,28 @@ class GeminiImpl {
       yield 'Error: $e';
     }
   }
+
+  Future<String?> generateImage(
+    String prompt, {
+    List<XFile> files = const [],
+  }) async {
+    final formData = FormData();
+    formData.fields.add(MapEntry('prompt', prompt));
+    for (var file in files) {
+      formData.files.add(
+        MapEntry(
+          'files',
+          await MultipartFile.fromFile(file.path, filename: file.name),
+        ),
+      );
+    }
+    try {
+      final response = await _dio.post('/image-generation', data: formData);
+
+      return response.data['imageUrl'];
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 }
