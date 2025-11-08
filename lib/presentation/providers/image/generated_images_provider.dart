@@ -7,7 +7,7 @@ import 'is_generating_provider.dart';
 
 part 'generated_images_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class GeneratedImages extends _$GeneratedImages {
   final GeminiImpl gemini = GeminiImpl();
 
@@ -26,7 +26,7 @@ class GeneratedImages extends _$GeneratedImages {
 
   void addImage(String imagePath) {
     generatedHistoryNotifier.addToHistory(imagePath);
-    state = [imagePath, ...state];
+    state = [...state, imagePath];
   }
 
   void clearImages() {
@@ -58,7 +58,7 @@ class GeneratedImages extends _$GeneratedImages {
   }
 
   Future<void> generateImageWithPreviousPrompt() async {
-    if (previousImages.isEmpty) return;
+    if (previousPrompt.isEmpty) return;
     await generateImages(previousPrompt, images: previousImages);
   }
 }

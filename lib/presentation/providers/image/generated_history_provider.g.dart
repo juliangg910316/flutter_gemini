@@ -20,7 +20,7 @@ final class GeneratedHistoryProvider
         argument: null,
         retry: null,
         name: r'generatedHistoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class GeneratedHistoryProvider
   }
 }
 
-String _$generatedHistoryHash() => r'eb75096a76b1e72f1c61860aeb53d4be4eb0b3d0';
+String _$generatedHistoryHash() => r'0e814b6cb150ac4892ddf436a45ccf2763c47a87';
 
 abstract class _$GeneratedHistory extends $Notifier<List<String>> {
   List<String> build();

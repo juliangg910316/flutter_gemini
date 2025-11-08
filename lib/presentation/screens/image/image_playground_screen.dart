@@ -1,5 +1,7 @@
 // https://gist.github.com/Klerith/85fe516a31580bd2b9d6090002ee3d24
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/presentation/providers/image/selected_art_provider.dart';
+import 'package:flutter_gemini/presentation/widgets/images/history_grid.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -36,16 +38,30 @@ class ImagePlaygroundScreen extends ConsumerWidget {
           // Selector de estilo de arte
           ArtStyleSelector(),
           // Llenar el espacio
-          Expanded(child: Container()),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: HistoryGrid(),
+            ),
+          ),
           // Espacio para el prompt
           CustomBottomInput(
             onSend: (partialText, {List<XFile> images = const []}) {
-              final generatedImagesNotifier =
-                  ref.read(generatedImagesProvider.notifier);
-              String prompt = partialText.text;
+              final generatedImagesNotifier = ref.read(
+                generatedImagesProvider.notifier,
+              );
+              final selectedArt = ref.read(selectedArtStyleProvider);
+              String promptWithArtStyle = partialText.text;
+
+              generatedImagesNotifier.clearImages();
+
+              if (selectedArt.isNotEmpty) {
+                promptWithArtStyle =
+                    '$promptWithArtStyle con estilo de $selectedArt';
+              }
 
               generatedImagesNotifier.generateImages(
-                prompt,
+                promptWithArtStyle,
                 images: images,
               );
             },
@@ -66,6 +82,13 @@ class GeneratedImageGallery extends ConsumerWidget {
     return SizedBox(
       height: 250,
       child: PageView(
+        onPageChanged: (value) {
+          if (value == generatedImages.length - 1) {
+            ref
+                .read(generatedImagesProvider.notifier)
+                .generateImageWithPreviousPrompt();
+          }
+        },
         controller: PageController(
           viewportFraction: 0.6, // Muestra 1.5 imágenes en la pantalla
           initialPage: 0,
@@ -76,12 +99,12 @@ class GeneratedImageGallery extends ConsumerWidget {
           if (generatedImages.isEmpty && !isGenerating)
             const EmptyPlaceholderImage(),
 
-          if (isGenerating) const GeneratingPlaceholderImage(),
-
           //* Aquí iremos colocando las imágenes generadas
           ...generatedImages.map(
             (imagePath) => GeneratedImage(imageUrl: imagePath),
           ),
+
+          if (isGenerating) const GeneratingPlaceholderImage(),
           // GeneratedImage(
           //   imageUrl:
           //       'https://www.theclickcommunity.com/blog/wp-content/uploads/2018/04/woman-with-red-hair-outside-by-Cassandra-Casley.jpg',
@@ -127,11 +150,12 @@ class GeneratedImage extends StatelessWidget {
   }
 }
 
-class ArtStyleSelector extends StatelessWidget {
+class ArtStyleSelector extends ConsumerWidget {
   const ArtStyleSelector({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedArtStyle = ref.watch(selectedArtStyleProvider);
     return SizedBox(
       height: 50,
       child: ListView.builder(
@@ -139,11 +163,16 @@ class ArtStyleSelector extends StatelessWidget {
         itemCount: imageArtStyles.length,
         itemBuilder: (context, index) {
           final style = imageArtStyles[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Chip(
-              label: Text(style),
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          final activeColor = selectedArtStyle == style
+              ? Theme.of(context).colorScheme.primaryContainer
+              : null;
+          return GestureDetector(
+            onTap: () {
+              ref.read(selectedArtStyleProvider.notifier).setSelectedArt(style);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Chip(label: Text(style), backgroundColor: activeColor),
             ),
           );
         },
@@ -178,7 +207,7 @@ class EmptyPlaceholderImage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.image_outlined, size: 50, color: Colors.white),
-          const Text('Empieza a generar imágenes'),
+          const Text('Empieza a generar imágenes', textAlign: TextAlign.center),
         ],
       ),
     );

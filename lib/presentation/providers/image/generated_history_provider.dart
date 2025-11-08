@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated_history_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class GeneratedHistory extends _$GeneratedHistory {
   @override
   List<String> build() {
@@ -10,6 +10,8 @@ class GeneratedHistory extends _$GeneratedHistory {
   }
 
   void addToHistory(String imagePath) {
+    if (!ref.mounted) return;
+    if (imagePath.isEmpty) return;
     state = [imagePath, ...state];
   }
 

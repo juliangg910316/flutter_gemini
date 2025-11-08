@@ -61,44 +61,39 @@ class _CustomBottomInputState extends State<CustomBottomInput> {
       });
     }
 
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: Container(
-        padding: const EdgeInsets.only(bottom: 5, top: 10),
-        decoration: BoxDecoration(color: seedColor),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Imágenes adjuntas
-              if (images.isNotEmpty)
-                _ImageAttachments(images: images, onDeleteImage: onDeleteImage),
-
-              Row(
-                children: [
-                  // Botón para adjuntar archivos
-                  IconButton(
-                    onPressed: onAttachmentPressed,
-                    icon: const Icon(Icons.attach_file_outlined),
+    return Container(
+      padding: const EdgeInsets.only(bottom: 5, top: 10),
+      decoration: BoxDecoration(color: seedColor),
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Imágenes adjuntas
+            if (images.isNotEmpty)
+              _ImageAttachments(images: images, onDeleteImage: onDeleteImage),
+    
+            Row(
+              children: [
+                // Botón para adjuntar archivos
+                IconButton(
+                  onPressed: onAttachmentPressed,
+                  icon: const Icon(Icons.attach_file_outlined),
+                ),
+                // Campo de texto expandible
+                _TextInput(
+                  onTextChanged: onTextChanged,
+                  controller: controller,
+                ),
+                // Botón de enviar con ícono de avión
+                IconButton(
+                  onPressed: text.isEmpty ? null : onSend,
+                  icon: Icon(
+                    Icons.send,
+                    color: text.isEmpty ? Colors.grey : Colors.white,
                   ),
-                  // Campo de texto expandible
-                  _TextInput(
-                    onTextChanged: onTextChanged,
-                    controller: controller,
-                  ),
-                  // Botón de enviar con ícono de avión
-                  IconButton(
-                    onPressed: text.isEmpty ? null : onSend,
-                    icon: Icon(
-                      Icons.send,
-                      color: text.isEmpty ? Colors.grey : Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

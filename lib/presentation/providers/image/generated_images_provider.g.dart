@@ -20,7 +20,7 @@ final class GeneratedImagesProvider
         argument: null,
         retry: null,
         name: r'generatedImagesProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class GeneratedImagesProvider
   }
 }
 
-String _$generatedImagesHash() => r'8d0d03644ff5e4d872b13c8f30156ae8d0f36aaa';
+String _$generatedImagesHash() => r'e8697764561306855b592eff2884f42f29797331';
 
 abstract class _$GeneratedImages extends $Notifier<List<String>> {
   List<String> build();
